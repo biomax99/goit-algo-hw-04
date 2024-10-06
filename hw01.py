@@ -42,29 +42,48 @@ def insertion_sort(arr):
             j -= 1
         arr[j + 1] = key
 
+# Функція для створення різних типів наборів даних
+def create_test_data(size):
+    # Несортований масив
+    unsorted_data = random.sample(range(size * 10), size)
+
+    # Напівсортований масив
+    half_sorted_data = sorted(unsorted_data[:size//2]) + unsorted_data[size//2:]
+
+    # Майже відсортований масив
+    nearly_sorted_data = sorted(unsorted_data)
+    nearly_sorted_data[-1], nearly_sorted_data[-2] = nearly_sorted_data[-2], nearly_sorted_data[-1]  # Змінюємо два останні елементи
+
+    return unsorted_data, half_sorted_data, nearly_sorted_data
+
 # Порівняння ефективності
 def compare_sorts():
-    sizes = [100, 1000, 5000]  # Різні розміри масивів
+    sizes = [10, 100, 1000]  # Розміри масивів
     for size in sizes:
-        arr = random.sample(range(size * 10), size)
+        unsorted, half_sorted, nearly_sorted = create_test_data(size)
 
-        # Копії для кожного алгоритму
-        arr_merge = arr.copy()
-        arr_insertion = arr.copy()
-        arr_tim_sort = arr.copy()
+        print(f"\nРозмір масиву: {size}")
 
-        # Вимірювання часу для Merge Sort
-        merge_time = timeit.timeit(lambda: merge_sort(arr_merge), number=1)
-        print(f"Merge Sort для {size} елементів: {merge_time:.5f} секунд")
+        for data, data_type in zip([unsorted, half_sorted, nearly_sorted], ["несортований", "напівсортований", "майже відсортований"]):
+            print(f"\nТестуємо {data_type} набір даних:")
 
-        # Вимірювання часу для Insertion Sort
-        insertion_time = timeit.timeit(lambda: insertion_sort(arr_insertion), number=1)
-        print(f"Insertion Sort для {size} елементів: {insertion_time:.5f} секунд")
+            # Копії для кожного алгоритму
+            arr_merge = data.copy()
+            arr_insertion = data.copy()
+            arr_tim_sort = data.copy()
 
-        # Вимірювання часу для вбудованого сортування Timsort (використовується у sorted())
-        timsort_time = timeit.timeit(lambda: sorted(arr_tim_sort), number=1)
-        print(f"Timsort для {size} елементів: {timsort_time:.5f} секунд")
-        print("-" * 40)
+            # Вимірювання часу для Merge Sort
+            merge_time = timeit.timeit(lambda: merge_sort(arr_merge), number=1)
+            print(f"Merge Sort: {merge_time:.5f} секунд")
+
+            # Вимірювання часу для Insertion Sort
+            insertion_time = timeit.timeit(lambda: insertion_sort(arr_insertion), number=1)
+            print(f"Insertion Sort: {insertion_time:.5f} секунд")
+
+            # Вимірювання часу для вбудованого сортування Timsort
+            timsort_time = timeit.timeit(lambda: sorted(arr_tim_sort), number=1)
+            print(f"Timsort: {timsort_time:.5f} секунд")
+            print("-" * 40)
 
 if __name__ == "__main__":
     compare_sorts()
